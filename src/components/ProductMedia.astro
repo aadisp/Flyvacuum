@@ -1,0 +1,61 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import RangeBar from './RangeBar.astro';
+import { SCALE } from '../data/products';
+
+interface Props {
+  images: ImageMetadata[];
+  alt: string;
+  range: [number, number] | null;
+  rangeLabel: string | null;
+}
+const { images, alt, range, rangeLabel } = Astro.props;
+const [main, ...extra] = images;
+const span = SCALE.max - SCALE.min;
+const ticks = [0, 500, 1000, 1500, 2000, 2500];
+---
+
+{main ? (
+  <figure>
+    <Image src={main} alt={alt} width={900} class="photo" />
+    {extra.length > 0 && (
+      <div class="extra" style={`--n:${Math.min(extra.length, 4)}`}>
+        {extra.map((img, i) => (
+          <Image src={img} alt={`${alt}, view ${i + 2}`} width={400} class="photo" loading="lazy" />
+        ))}
+      </div>
+    )}
+  </figure>
+) : (
+  <div class="panel">
+    {range ? (
+      <>
+        <p class="eyebrow">Operating range</p>
+        <p class="big">{rangeLabel}</p>
+        <RangeBar range={range} />
+        <div class="ticks" aria-hidden="true">
+          {ticks.map((t) => <i style={`left:${((t - SCALE.min) / span) * 100}%`}>{t}</i>)}
+        </div>
+      </>
+    ) : (
+      <>
+        <p class="eyebrow">Built to order</p>
+        <p class="big">Designed around your process.</p>
+        <p class="note">Tell us the size, working range and throughput you need.</p>
+      </>
+    )}
+  </div>
+)}
+
+<style>
+  figure { margin: 0; }
+  figure :global(img.photo) { width: 100%; height: auto; border: 1px solid var(--line); background: #fff; }
+  .extra { display: grid; grid-template-columns: repeat(var(--n), 1fr); gap: 10px; margin-top: 10px; }
+  .panel { background: var(--panel); border: 1px solid var(--line); padding: 32px; }
+  .eyebrow { font-size: 14px; color: var(--mute); margin: 0 0 6px; }
+  .big { font: 800 40px/1.05 var(--font-head); color: var(--indigo-dk); margin: 0 0 22px; }
+  .note { color: var(--mute); margin: 0; }
+  .ticks { position: relative; height: 18px; margin-top: 6px; font-size: 12px; color: var(--mute); }
+  .ticks i { position: absolute; font-style: normal; transform: translateX(-50%); }
+</style>

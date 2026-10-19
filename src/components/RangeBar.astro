@@ -1,0 +1,23 @@
+---
+import { SCALE } from '../data/products';
+
+interface Props { range: [number, number] | null }
+const { range } = Astro.props;
+
+const span = SCALE.max - SCALE.min;
+const heat = (t: number) =>
+  t < 150 ? '#3b82c4' : t < 700 ? '#6b4fbb' : t < 1500 ? '#d3212d' : t < 2300 ? '#ee7b1f' : '#f5ae2a';
+
+const left = range ? ((range[0] - SCALE.min) / span) * 100 : 0;
+const width = range ? Math.max(((range[1] - range[0]) / span) * 100, 2) : 0;
+const color = range ? heat(range[1]) : 'transparent';
+---
+
+<div class="track" aria-hidden="true">
+  {range && <span style={`left:${left}%;width:${width}%;background:${color}`}></span>}
+</div>
+
+<style>
+  .track { position: relative; height: 10px; border-radius: 5px; background: var(--bg); }
+  span { position: absolute; top: 0; bottom: 0; min-width: 8px; border-radius: 5px; }
+</style>

@@ -1,0 +1,72 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import PageIntro from '../../../components/PageIntro.astro';
+import SpecStrip from '../../../components/SpecStrip.astro';
+import ProductMedia from '../../../components/ProductMedia.astro';
+import ModelTable from '../../../components/ModelTable.astro';
+import CtaBand from '../../../components/CtaBand.astro';
+import { products } from '../../../data/products';
+import { productImages } from '../../../data/images';
+
+export const getStaticPaths = (() =>
+  products.flatMap((product) =>
+    (product.models ?? []).map((model) => ({
+      params: { slug: product.slug, model: model.slug },
+      props: { product, model },
+    })),
+  )) satisfies GetStaticPaths;
+
+const { product, model } = Astro.props;
+const images = productImages(`${product.slug}-${model.slug}`);
+const paragraphs = model.body ?? [product.body[0]];
+const quote = `/contact?product=${encodeURIComponent(model.name)}`;
+---
+
+<BaseLayout title={model.name} description={`${model.name}: ${model.specs.map((s) => s[1]).join(', ')}.`}>
+  <Breadcrumbs
+    items={[
+      { label: 'Home', href: '/' },
+      { label: 'Products', href: '/products' },
+      { label: product.name, href: `/products/${product.slug}` },
+      { label: model.name },
+    ]}
+  />
+  <PageIntro title={model.name} />
+
+  <section class="section">
+    <div class="wrap">
+      <SpecStrip specs={model.specs} />
+      <div class="two">
+        <div>
+          {paragraphs.map((para) => <p>{para}</p>)}
+          <p>Standard and custom designs are available, tailored to your requirements.</p>
+          <div class="actions">
+            <a class="btn btn-red" href={quote}>Get a quote</a>
+            <a class="btn outline" href={`/products/${product.slug}`}>Back to {product.label.toLowerCase()}</a>
+          </div>
+        </div>
+        <ProductMedia images={images} alt={model.name} range={model.range} rangeLabel={model.rangeLabel} />
+      </div>
+      {model.table && (
+        <div class="sizes">
+          <ModelTable table={model.table} />
+          <p class="foot">Sizes are for standard models. Custom sizes are available on request.</p>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <CtaBand title="Tell us the temperature." text="Send your process, chamber size and working range. We will reply with what we can build." />
+</BaseLayout>
+
+<style>
+  .two { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 56px; align-items: start; margin-top: 48px; }
+  .sizes { margin-top: 56px; }
+  .foot { color: var(--mute); font-size: 15px; margin: 14px 0 0; }
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 32px; }
+  .outline { border-color: var(--indigo); color: var(--indigo); }
+  .outline:hover { background: var(--indigo); color: #fff; }
+  @media (max-width: 860px) { .two { grid-template-columns: 1fr; gap: 32px; } }
+</style>

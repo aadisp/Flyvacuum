@@ -1,0 +1,46 @@
+---
+import type { SizeTable } from '../data/products';
+interface Props { table: SizeTable }
+const { table } = Astro.props;
+
+// A row without a label continues the one above it, so merge the label cell down.
+const spans = table.rows.map((row, i) => {
+  if (!row.label) return 0;
+  let n = 1;
+  while (table.rows[i + n] && !table.rows[i + n].label) n++;
+  return n;
+});
+---
+
+<div class="table-wrap" role="region" aria-label={table.title} tabindex="0">
+  <table>
+    <caption>{table.title}</caption>
+    <thead>
+      <tr>
+        <th scope="col">Model</th>
+        <th scope="col"><span class="sr">Unit</span></th>
+        {table.models.map((m) => <th scope="col">{m}</th>)}
+      </tr>
+    </thead>
+    <tbody>
+      {table.rows.map((row, i) => (
+        <tr>
+          {row.label && <th scope="row" rowspan={spans[i]}>{row.label}</th>}
+          <td class="unit">{row.unit}</td>
+          {row.values.map((v) => <td>{v}</td>)}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); background: var(--panel); }
+  table { width: 100%; border-collapse: collapse; font-size: 16px; min-width: 560px; }
+  caption { text-align: left; font: 800 28px/1 var(--font-head); color: var(--indigo-dk); padding: 20px 22px 14px; }
+  th, td { padding: 12px 16px; text-align: left; border-top: 1px solid var(--line); white-space: nowrap; }
+  thead th { background: var(--indigo); color: #fff; font-weight: 600; font-size: 15px; }
+  tbody th { background: var(--bg); font-weight: 600; white-space: normal; min-width: 180px; vertical-align: top; }
+  .unit { color: var(--mute); font-size: 14px; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+</style>

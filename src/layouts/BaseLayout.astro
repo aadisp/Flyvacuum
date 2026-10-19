@@ -1,0 +1,69 @@
+---
+import '@fontsource/big-shoulders-display/800';
+import '@fontsource/ibm-plex-sans/400.css';
+import '@fontsource/ibm-plex-sans/500.css';
+import '@fontsource/ibm-plex-sans/600.css';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { site } from '../data/site';
+import ogImage from '../assets/hero.jpg';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const { title, description = site.description } = Astro.props;
+const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
+const image = Astro.site ? new URL(ogImage.src, Astro.site).href : undefined;
+const jsonLd = Astro.site
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: site.legalName,
+      alternateName: site.name,
+      url: Astro.site.href,
+      logo: new URL('/favicon.png', Astro.site).href,
+      email: site.email,
+      telephone: site.phone,
+      slogan: site.tagline,
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'Plot no: 498, #1 & 2A, 4th Phase, 3rd Stage, Peenya Industrial Area',
+        addressLocality: 'Bangalore',
+        postalCode: '560058',
+        addressCountry: 'IN',
+      },
+    }
+  : undefined;
+const fullTitle = title
+  ? `${title} | ${site.name}`
+  : `${site.name} | Vacuum furnaces, ovens and hot zones`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    {canonical && <link rel="canonical" href={canonical} />}
+    {canonical && <meta property="og:url" content={canonical} />}
+    {image && <meta property="og:image" content={image} />}
+    <meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
+    <meta name="theme-color" content="#1e1f55" />
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+    <link rel="icon" type="image/png" href="/favicon.png" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <Header />
+    <main id="main"><slot /></main>
+    <Footer />
+  </body>
+</html>

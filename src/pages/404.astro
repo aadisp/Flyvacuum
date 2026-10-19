@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/PageIntro.astro';
+---
+
+<BaseLayout title="Page not found">
+  <PageIntro title="Page not found" lead="That page does not exist, or it has moved.">
+    <div class="actions">
+      <a class="btn btn-red" href="/">Go to the home page</a>
+      <a class="btn outline" href="/products">See products</a>
+    </div>
+  </PageIntro>
+  <div class="gap"></div>
+</BaseLayout>
+
+<style>
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
+  .outline { border-color: var(--indigo); color: var(--indigo); }
+  .outline:hover { background: var(--indigo); color: #fff; }
+  .gap { height: 96px; }
+</style>

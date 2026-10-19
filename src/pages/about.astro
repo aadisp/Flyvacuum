@@ -1,0 +1,114 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import PageIntro from '../components/PageIntro.astro';
+import SpecStrip from '../components/SpecStrip.astro';
+import CtaBand from '../components/CtaBand.astro';
+import photo from '../assets/welcome.jpg';
+
+const facts: [string, string][] = [
+  ['Established', '2016'],
+  ['Combined experience', '80+ years'],
+  ['Sectors served', 'Private, public, defence'],
+];
+const processes = [
+  ['Brazing and sintering', 'Joining and consolidating metal parts under vacuum.'],
+  ['Hardening, tempering and annealing', 'Quench, temper and soften metals with clean surfaces.'],
+  ['Nitriding and metal melting', 'Surface treatment and melting in controlled conditions.'],
+  ['Special processes', 'Furnaces tailored to a requirement that standard models do not meet.'],
+];
+---
+
+<BaseLayout
+  title="About Us"
+  description="Flyvacuum Technologies, established in 2016, builds vacuum furnaces, ovens, hot zones and components for the private, public and defence sectors."
+>
+  <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'About Us' }]} />
+  <PageIntro
+    title="About Flyvacuum"
+    lead="Flyvacuum Technologies designs and builds vacuum furnaces, components, coating systems, pumps, control systems and accessories to the highest quality standards, for each customer’s specialised processing needs."
+  />
+
+  <section class="section">
+    <div class="wrap">
+      <SpecStrip specs={facts} />
+
+      <div class="two">
+        <div>
+          <h2>Who we are</h2>
+          <p>
+            Flyvacuum was established in 2016 and is run by a committed team with more than 80
+            years of combined experience in design, manufacturing and business management. Our
+            focus is quality and customer satisfaction.
+          </p>
+          <p>
+            We have extensive experience designing and manufacturing large and complex vacuum
+            systems for the private, public and defence sectors. A modern manufacturing facility
+            and a skilled workforce let us take on challenging projects, from medium to large
+            scale.
+          </p>
+          <p>Our subject matter experts support our own equipment and other manufacturers’ too.</p>
+        </div>
+        <Image
+          class="photo"
+          src={photo}
+          alt="A Flyvacuum vacuum furnace with its control cabinet, built at the company’s facility in Bangalore"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt">
+    <div class="wrap two">
+      <div>
+        <h2>What our furnaces do</h2>
+        <p class="lead">
+          Horizontal and vertical models, rated from 1 to 16 bar and up to 2600 °C, suit a broad
+          range of heat treatment.
+        </p>
+        <a class="btn btn-red" href="/products">See our products</a>
+      </div>
+      <ul class="list">
+        {processes.map(([title, text]) => (
+          <li><strong>{title}</strong><span>{text}</span></li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap two">
+      <div>
+        <h2>Beyond our own furnaces</h2>
+        <p class="lead">
+          We support vacuum ovens and furnaces made by other manufacturers, including imported
+          equipment.
+        </p>
+      </div>
+      <ul class="list">
+        <li><strong>Erection and commissioning</strong><span>Of any vacuum oven or furnace.</span></li>
+        <li><strong>Maintenance and servicing</strong><span>Keeping systems running to specification.</span></li>
+        <li><strong>Refurbishment</strong><span>Bringing ageing vacuum systems back into service.</span></li>
+        <li><strong>Consumables and components</strong><span>Charge baskets, heating elements, pump oils, valves and flanges.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand title="Have a project in mind?" text="Our subject matter experts will review it with you." />
+</BaseLayout>
+
+<style>
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+  .section > .wrap > .two { margin-top: 56px; }
+  .alt { background: var(--panel); border-block: 1px solid var(--line); }
+  .two h2 { margin-bottom: 18px; }
+  .two :global(img.photo) { width: 100%; height: auto; border: 1px solid var(--line); }
+  .two .btn { margin-top: 8px; }
+  .list { list-style: none; margin: 0; padding: 0; }
+  .list li { padding: 18px 0; border-top: 1px solid var(--line); }
+  .list li:last-child { border-bottom: 1px solid var(--line); }
+  .list strong { display: block; font-weight: 600; }
+  .list span { color: var(--mute); font-size: 16px; }
+  @media (max-width: 860px) { .two { grid-template-columns: 1fr; gap: 32px; } }
+</style>

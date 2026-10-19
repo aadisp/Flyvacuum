@@ -1,16 +1,147 @@
 ---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TempLadder from '../components/TempLadder.astro';
+import CtaBand from '../components/CtaBand.astro';
+import hero from '../assets/hero.jpg';
+import welcome from '../assets/welcome.jpg';
+import productsImg from '../assets/products.jpg';
+import consumables from '../assets/consumables.jpg';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout>
+  <!-- 1a. Hero -->
+  <section class="hero">
+    <div class="hero-bg">
+      <Image src={hero} alt="" loading="eager" fetchpriority="high" />
+    </div>
+    <div class="wrap hero-in">
+      <h1>We break heat barriers.</h1>
+      <p>
+        Vacuum furnaces, ovens, hot zones and ultra high vacuum systems, built in Bangalore to
+        each customer’s specification.
+      </p>
+      <div class="cta">
+        <a class="btn btn-red" href="/products">See our products</a>
+        <a class="btn btn-line" href="/contact">Talk to an engineer</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1b. Introduction -->
+  <section class="section">
+    <div class="wrap two">
+      <Image
+        class="photo"
+        src={welcome}
+        alt="Vacuum furnace with a large round door and yellow and black safety border, beside its control cabinet"
+      />
+      <div>
+        <h2>Built in Bangalore, made to your specification.</h2>
+        <p class="lead" style="margin-top:20px">
+          Flyvacuum Technologies Pvt Ltd manufactures ultra high vacuum systems, vacuum furnaces,
+          vacuum ovens, hot zones and components, each customised to the customer’s requirement.
+        </p>
+        <p>
+          Since 2016 our team of vacuum specialists has designed and built large, complex systems
+          for the private, public and defence sectors.
+        </p>
+        <a class="btn btn-red" href="/about">About us</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1c. Products -->
+  <section class="section alt">
+    <div class="wrap">
+      <div class="two top">
+        <div>
+          <h2>Products</h2>
+          <p class="lead" style="margin-top:20px">
+            Vacuum ovens up to 500 °C, and furnaces in vertical or horizontal configuration for
+            pressures from 1 to 16 bar and temperatures up to 2600 °C. Standard or custom designed.
+          </p>
+          <p>
+            We also build <a href="/products/pumping-system">pumping systems</a>,{' '}
+            <a href="/products/induction-melting">induction melting furnaces</a> and{' '}
+            <a href="/products/glove-box">glove boxes</a>.
+          </p>
+          <a class="btn btn-red" href="/products">View all products</a>
+        </div>
+        <Image
+          class="photo"
+          src={productsImg}
+          alt="Vacuum furnace with its pumping system and control cabinets"
+        />
+      </div>
+      <TempLadder />
+    </div>
+  </section>
+
+  <!-- 1d. Consumables and services -->
+  <section class="section dark">
+    <div class="wrap two stretch">
+      <article class="panel">
+        <Image
+          class="panel-img"
+          src={consumables}
+          alt="Slotted graphite component for a vacuum furnace hot zone"
+        />
+        <h2>Consumables</h2>
+        <p>Parts and fluids to keep your furnace running.</p>
+        <ul>
+          <li>Molybdenum charge baskets and boats</li>
+          <li>Heating elements</li>
+          <li>Diffusion pump and rotary pump oils</li>
+        </ul>
+        <p>We also manufacture customised vacuum pumping stations.</p>
+      </article>
+      <article class="panel">
+        <h2>Services</h2>
+        <p>We support vacuum equipment from other manufacturers too, including imported furnaces.</p>
+        <ul>
+          <li><strong>Erection and commissioning</strong> of any vacuum oven or furnace</li>
+          <li><strong>Maintenance and servicing</strong> of vacuum systems</li>
+          <li><strong>Refurbishment</strong> of ageing vacuum systems</li>
+        </ul>
+        <a class="btn btn-red" href="/contact">Ask about service</a>
+      </article>
+    </div>
+  </section>
+
+  <CtaBand
+    title="Tell us the temperature."
+    text="Send your process, chamber size and working range. We will reply with what we can build."
+  />
+</BaseLayout>
+
+<style>
+  .hero { position: relative; min-height: 540px; display: flex; align-items: center; color: #fff; overflow: hidden; }
+  .hero-bg, .hero-bg :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(30, 31, 85, 0.92) 0%, rgba(30, 31, 85, 0.6) 55%, rgba(30, 31, 85, 0.25) 100%); }
+  .hero-in { position: relative; z-index: 1; padding-top: 72px; padding-bottom: 72px; }
+  .hero h1 { color: #fff; max-width: 11ch; }
+  .hero p { font-size: 20px; color: #dfe1f3; max-width: 46ch; margin: 22px 0 30px; }
+  .cta { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+  .two.top { align-items: start; }
+  .two.stretch { align-items: stretch; gap: 28px; }
+  .photo, .two > :global(img.photo) { width: 100%; height: auto; border: 1px solid var(--line); }
+  .two > div > .btn { margin-top: 8px; }
+  .alt { background: var(--panel); border-block: 1px solid var(--line); }
+  .alt p a { color: var(--indigo); font-weight: 500; }
+
+  .dark { background: var(--indigo); }
+  .panel { background: var(--indigo-dk); color: #dfe1f3; padding: 32px; display: flex; flex-direction: column; }
+  .panel h2 { color: #fff; margin-bottom: 12px; }
+  .panel :global(.panel-img) { width: 100%; height: 200px; object-fit: contain; background: #fff; padding: 12px; margin-bottom: 24px; }
+  .panel ul { margin: 0 0 18px; padding-left: 20px; }
+  .panel li { margin: 6px 0; }
+  .panel .btn { align-self: flex-start; margin-top: auto; }
+
+  @media (max-width: 860px) {
+    .two { grid-template-columns: 1fr; gap: 32px; }
+    .hero { min-height: 460px; }
+  }
+</style>

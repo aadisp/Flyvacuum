@@ -1,0 +1,141 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import PageIntro from '../components/PageIntro.astro';
+import { site } from '../data/site';
+---
+
+<BaseLayout
+  title="Contact Us"
+  description="Contact Flyvacuum Technologies in Peenya, Bangalore. Send your process, chamber size and temperature range for a quote."
+>
+  <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Contact Us' }]} />
+  <PageIntro
+    title="Contact us"
+    lead="Send your process, working temperature, chamber size and pressure. We will reply with what we can build."
+  />
+
+  <section class="section">
+    <div class="wrap two">
+      <div class="info">
+        <h2>Factory and office</h2>
+        <address>{site.address}</address>
+        <a class="map" href={site.mapsHref} target="_blank" rel="noopener">Open in Google Maps</a>
+
+        <dl>
+          <dt>Phone</dt>
+          <dd><a href={site.phoneHref}>{site.phone}</a></dd>
+          <dt>Email</dt>
+          <dd><a href={`mailto:${site.email}`}>{site.email}</a></dd>
+        </dl>
+      </div>
+
+      <form id="enquiry" data-endpoint={site.formEndpoint} data-email={site.email} novalidate>
+        <label>Name <span class="req">*</span>
+          <input name="name" required autocomplete="name" />
+        </label>
+        <label>Email <span class="req">*</span>
+          <input name="email" type="email" required autocomplete="email" />
+        </label>
+        <label>Phone
+          <input name="phone" type="tel" autocomplete="tel" />
+        </label>
+        <label>Your enquiry <span class="req">*</span>
+          <textarea name="message" required rows="6" placeholder="Process, working temperature, chamber size, pressure"></textarea>
+        </label>
+        <!-- Spam trap: real visitors never see or fill this in. -->
+        <div class="trap" aria-hidden="true">
+          <label>Leave this empty <input name="website" tabindex="-1" autocomplete="off" /></label>
+        </div>
+        <div class="send">
+          <button class="btn btn-red" type="submit">Send enquiry</button>
+          <p id="status" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .two { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 64px; align-items: start; }
+  h2 { margin-bottom: 16px; }
+  address { font-style: normal; max-width: 34ch; }
+  .map { display: inline-block; margin-top: 10px; color: var(--indigo); font-weight: 500; }
+  dl { margin: 32px 0 0; }
+  dt { font-size: 14px; color: var(--mute); margin-top: 18px; }
+  dd { margin: 2px 0 0; font-size: 20px; }
+  dd a { text-decoration: none; }
+  dd a:hover { color: var(--red); }
+
+  form { display: grid; gap: 18px; background: var(--panel); border: 1px solid var(--line); padding: 32px; }
+  label { display: grid; gap: 6px; font-size: 15px; font-weight: 500; }
+  .req { color: var(--red); }
+  input, textarea { font: inherit; font-weight: 400; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 2px; padding: 12px 14px; width: 100%; }
+  input:focus, textarea:focus { border-color: var(--indigo); }
+  input.bad, textarea.bad { border-color: var(--red); }
+  textarea { resize: vertical; min-height: 150px; }
+  .trap { position: absolute; left: -9999px; }
+  .send { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+  .send .btn:disabled { opacity: 0.6; cursor: wait; }
+  #status { margin: 0; color: var(--mute); font-size: 15px; }
+  #status.ok { color: #1c7a3d; }
+  #status.err { color: var(--red); }
+  @media (max-width: 860px) { .two { grid-template-columns: 1fr; gap: 40px; } form { padding: 22px; } }
+</style>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('#enquiry');
+  const status = document.querySelector<HTMLElement>('#status');
+
+  if (form && status) {
+    const message = form.elements.namedItem('message') as HTMLTextAreaElement;
+    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    const product = new URLSearchParams(location.search).get('product');
+    if (product && !message.value) message.value = `I would like a quote for: ${product}\n\n`;
+
+    const say = (text: string, kind = '') => {
+      status.textContent = text;
+      status.className = kind;
+    };
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const data = new FormData(form);
+      if (data.get('website')) return; // spam trap filled in
+
+      let valid = true;
+      form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('[required]').forEach((field) => {
+        const bad = !field.value.trim() || (field.type === 'email' && !field.checkValidity());
+        field.classList.toggle('bad', bad);
+        if (bad) valid = false;
+      });
+      if (!valid) {
+        say('Please fill in your name, a valid email and your enquiry.', 'err');
+        return;
+      }
+
+      const endpoint = form.dataset.endpoint;
+      const email = form.dataset.email ?? '';
+
+      if (!endpoint) {
+        const body = `Name: ${data.get('name')}\nEmail: ${data.get('email')}\nPhone: ${data.get('phone') ?? ''}\n\n${data.get('message')}`;
+        location.href = `mailto:${email}?subject=${encodeURIComponent('Enquiry from ' + data.get('name'))}&body=${encodeURIComponent(body)}`;
+        say('Your email app should open with the enquiry ready to send.');
+        return;
+      }
+
+      button.disabled = true;
+      say('Sending…');
+      try {
+        const response = await fetch(endpoint, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
+        if (!response.ok) throw new Error('failed');
+        form.reset();
+        say('Thank you. We have received your enquiry and will reply soon.', 'ok');
+      } catch {
+        say(`Sorry, that did not send. Please email us at ${email}.`, 'err');
+      } finally {
+        button.disabled = false;
+      }
+    });
+  }
+</script>

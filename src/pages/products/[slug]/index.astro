@@ -1,0 +1,86 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import PageIntro from '../../../components/PageIntro.astro';
+import SpecStrip from '../../../components/SpecStrip.astro';
+import ProductMedia from '../../../components/ProductMedia.astro';
+import ProductCard from '../../../components/ProductCard.astro';
+import CtaBand from '../../../components/CtaBand.astro';
+import { products } from '../../../data/products';
+import { productImages } from '../../../data/images';
+
+export const getStaticPaths = (() =>
+  products.map((product) => ({ params: { slug: product.slug }, props: { product } }))) satisfies GetStaticPaths;
+
+const { product } = Astro.props;
+const images = productImages(product.slug);
+const quote = `/contact?product=${encodeURIComponent(product.name)}`;
+---
+
+<BaseLayout title={product.name} description={product.summary}>
+  <Breadcrumbs
+    items={[{ label: 'Home', href: '/' }, { label: 'Products', href: '/products' }, { label: product.name }]}
+  />
+  <PageIntro title={product.name} lead={product.summary} />
+
+  <section class="section">
+    <div class="wrap">
+      <SpecStrip specs={product.specs} />
+      <div class="two">
+        <div>
+          {product.body.map((para) => <p>{para}</p>)}
+          <p>Standard and custom designs are available, tailored to your requirements.</p>
+          {product.advantages && (
+            <>
+              <h2>Advantages</h2>
+              <ul class="ticks">
+                {product.advantages.map((a) => <li>{a}</li>)}
+              </ul>
+            </>
+          )}
+          <div class="actions">
+            <a class="btn btn-red" href={quote}>Get a quote</a>
+            <a class="btn outline" href="/products">All products</a>
+          </div>
+        </div>
+        <ProductMedia images={images} alt={product.name} range={product.range} rangeLabel={product.rangeLabel} />
+      </div>
+
+      {product.models && (
+        <div class="models">
+          <h2>Models</h2>
+          <div class="grid">
+            {product.models.map((m) => (
+              <ProductCard
+                href={`/products/${product.slug}/${m.slug}`}
+                title={m.name}
+                range={m.range}
+                rangeLabel={m.rangeLabel}
+                imageKey={`${product.slug}-${m.slug}`}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <CtaBand title="Tell us the temperature." text="Send your process, chamber size and working range. We will reply with what we can build." />
+</BaseLayout>
+
+<style>
+  .two { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 56px; align-items: start; margin-top: 48px; }
+  h2 { font-size: 36px; margin: 32px 0 12px; }
+  .ticks { list-style: none; margin: 0; padding: 0; }
+  .ticks li { padding: 10px 0 10px 28px; border-top: 1px solid var(--line); position: relative; }
+  .ticks li:last-child { border-bottom: 1px solid var(--line); }
+  .ticks li::before { content: ''; position: absolute; left: 4px; top: 18px; width: 12px; height: 6px; border-left: 2px solid var(--red); border-bottom: 2px solid var(--red); transform: rotate(-45deg); }
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 32px; }
+  .outline { border-color: var(--indigo); color: var(--indigo); }
+  .outline:hover { background: var(--indigo); color: #fff; }
+  .models { margin-top: 64px; }
+  .models h2 { margin-top: 0; }
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 20px; }
+  @media (max-width: 860px) { .two { grid-template-columns: 1fr; gap: 32px; } .grid { grid-template-columns: 1fr; } }
+</style>

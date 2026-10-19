@@ -1,0 +1,35 @@
+---
+import { site, nav } from '../data/site';
+const year = new Date().getFullYear();
+---
+
+<footer>
+  <div class="wrap grid">
+    <div>
+      <h3>{site.name}</h3>
+      <p>{site.tagline}</p>
+    </div>
+    <div>
+      <h3>Explore</h3>
+      {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+    </div>
+    <div>
+      <h3>Contact</h3>
+      <p>{site.address}</p>
+      <a href={site.phoneHref}>{site.phone}</a>
+      <a href={`mailto:${site.email}`}>{site.email}</a>
+    </div>
+    <p class="fine">© {year} {site.legalName}. All rights reserved.</p>
+  </div>
+</footer>
+
+<style>
+  footer { background: var(--indigo-dk); color: #b4b7d6; font-size: 15px; padding: 56px 0 28px; }
+  .grid { display: grid; grid-template-columns: 1.3fr 1fr 1.4fr; gap: 40px; }
+  h3 { color: #fff; font-size: 22px; margin-bottom: 12px; }
+  a { display: block; text-decoration: none; padding: 2px 0; }
+  a:hover { color: #fff; }
+  p { margin: 0 0 8px; }
+  .fine { grid-column: 1 / -1; border-top: 1px solid #3a3c78; padding-top: 18px; margin-top: 8px; font-size: 14px; }
+  @media (max-width: 860px) { .grid { grid-template-columns: 1fr; gap: 28px; } }
+</style>

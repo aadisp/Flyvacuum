@@ -1,43 +1,41 @@
-# Astro Starter Kit: Minimal
+# Flyvacuum Technologies website
 
-```sh
-npm create astro@latest -- --template minimal
+Built with [Astro](https://astro.build). Static output, no database.
+
+## Run it
+
+```
+npm install
+npm run dev       # http://localhost:4321
+npm run build     # production files in dist/
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Needs Node 22.22 or newer.
 
-## 🚀 Project Structure
+## Where things live
 
-Inside of your Astro project, you'll see the following folders and files:
+| To change | Edit |
+|---|---|
+| Phone, email, address, form endpoint | `src/data/site.ts` |
+| Product text, specs, size tables | `src/data/products.ts` |
+| Datasheet list | `src/data/components.ts` (PDFs go in `public/datasheets/`) |
+| Product photos | `src/assets/products/` (see below) |
+| Colours and fonts | `src/styles/global.css` |
+| Live web address, old-link redirects | `astro.config.mjs` |
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+## Product photos
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+Drop a photo into `src/assets/products/` and it appears on its page automatically.
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+- Main photo: name it after the page, for example `hot-zones.jpg`, or `gas-cooling-horizontal.jpg` for a model page.
+- Extra photos: add a number, for example `hot-zones-2.jpg`, `hot-zones-3.jpg`.
+- Page names: `gas-cooling`, `oil-quenching`, `pumping-system`, `hot-zones`, `vacuum-oven`, `induction-melting`,
+  `thermal-vacuum-chambers`, `glove-box`, and the models `gas-cooling-horizontal`, `gas-cooling-vertical`,
+  `oil-quenching-dual-chamber`.
 
-Any static assets, like images, can be placed in the `public/` directory.
+The home page photos are `src/assets/hero.jpg`, `welcome.jpg`, `products.jpg` and `consumables.jpg`.
 
-## 🧞 Commands
+## Contact form
 
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Paste a form service URL (for example a Formspree endpoint) into `formEndpoint` in `src/data/site.ts`.
+Until then the form opens the visitor's email app.

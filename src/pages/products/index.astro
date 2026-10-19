@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PageIntro from '../../components/PageIntro.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { products } from '../../data/products';
+---
+
+<BaseLayout
+  title="Products"
+  description="Vacuum ovens up to 500 °C and furnaces up to 2600 °C, plus hot zones, pumping systems, induction melting furnaces, thermal vacuum chambers and glove boxes."
+>
+  <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Products' }]} />
+  <PageIntro
+    title="Products"
+    lead="Vacuum ovens up to 500 °C and furnaces in vertical or horizontal configuration, at 1 to 16 bar and up to 2600 °C, for a wide range of heating processes."
+  />
+  <section class="section">
+    <div class="wrap">
+      <div class="grid">
+        {products.map((p) => (
+          <ProductCard
+            href={`/products/${p.slug}`}
+            title={p.name}
+            text={p.summary}
+            range={p.range}
+            rangeLabel={p.rangeLabel}
+            imageKey={p.slug}
+          />
+        ))}
+      </div>
+      <p class="more">Looking for flanges, valves or baffles? See <a href="/components">Components</a>.</p>
+    </div>
+  </section>
+  <CtaBand title="Not sure which one fits?" text="Describe your process and we will recommend a setup." />
+</BaseLayout>
+
+<style>
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .more { margin: 36px 0 0; color: var(--mute); }
+  .more a { color: var(--indigo); font-weight: 500; }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 580px) { .grid { grid-template-columns: 1fr; } }
+</style>
